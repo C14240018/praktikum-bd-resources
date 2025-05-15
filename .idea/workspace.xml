@@ -4,7 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="00e030ff-d420-4e84-ba0b-4ecefd546efd" name="Changes" comment="" />
+    <list default="true" id="00e030ff-d420-4e84-ba0b-4ecefd546efd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/scenes/User/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/resources/com/example/bdsqltester/avarage-view.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/resources/com/example/bdsqltester/user-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/HelloApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/HelloApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/datasources/GradingDataSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/datasources/GradingDataSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/datasources/MainDataSource.java" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/datasources/MainDataSource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/dtos/Assignment.java" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/dtos/Assignment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/dtos/Grade.java" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/dtos/Grade.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/dtos/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/dtos/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/scenes/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/scenes/LoginController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/scenes/admin/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/java/com/example/bdsqltester/scenes/admin/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/resources/com/example/bdsqltester/admin-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/resources/com/example/bdsqltester/admin-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/resources/com/example/bdsqltester/login-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/03_bd-sql-tester-template/src/main/resources/com/example/bdsqltester/login-view.fxml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,6 +32,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 6
+}]]></component>
   <component name="ProjectId" id="2cogt7LEIuKAoIjURiZADApwI4j" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -24,7 +43,10 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/ASUS/Downloads/ywgrtugf/03_bd-sql-tester-template"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />

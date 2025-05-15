@@ -3,6 +3,7 @@ package com.example.bdsqltester.scenes.admin;
 import com.example.bdsqltester.datasources.GradingDataSource;
 import com.example.bdsqltester.datasources.MainDataSource;
 import com.example.bdsqltester.dtos.Assignment;
+import com.example.bdsqltester.dtos.Grade;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -33,18 +35,17 @@ public class AdminController {
     @FXML
     private TextField nameField;
 
+    @FXML
+    private Button deleteButton;
+
     private final ObservableList<Assignment> assignments = FXCollections.observableArrayList();
 
     @FXML
     void initialize() {
-        // Set idField to read-only
         idField.setEditable(false);
         idField.setMouseTransparent(true);
         idField.setFocusTraversable(false);
-
-        // Populate the ListView with assignment names
         refreshAssignmentList();
-
         assignmentList.setCellFactory(param -> new ListCell<Assignment>() {
             @Override
             protected void updateItem(Assignment item, boolean empty) {
@@ -56,7 +57,6 @@ public class AdminController {
                 }
             }
 
-            // Bind the onAssignmentSelected method to the ListView
             @Override
             public void updateSelected(boolean selected) {
                 super.updateSelected(selected);
@@ -65,33 +65,23 @@ public class AdminController {
                 }
             }
         });
+
+        // Atur aksi untuk tombol delete assignment
+        deleteButton.setOnAction(this::onDeleteAssignmentClick);
     }
 
     void refreshAssignmentList() {
-        // Clear the current list
         assignments.clear();
-
-        // Re-populate the ListView with assignment names
         try (Connection c = MainDataSource.getConnection()) {
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM assignments");
-
             while (rs.next()) {
-                // Create a new assignment object
-                assignments.addAll(new Assignment(rs));
+                assignments.add(new Assignment(rs));
             }
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Database Error");
-            alert.setContentText(e.toString());
+            showAlert("Error", "Database Error", e.toString());
         }
-
-        // Set the ListView to display assignment names
         assignmentList.setItems(assignments);
-
-        // Set currently selected to the id inside the id field
-        // This is inefficient, you can optimize this.
         try {
             if (!idField.getText().isEmpty()) {
                 long id = Long.parseLong(idField.getText());
@@ -103,60 +93,46 @@ public class AdminController {
                 }
             }
         } catch (NumberFormatException e) {
-            // Ignore, idField is empty
+            // Ignore
         }
     }
 
     void onAssignmentSelected(Assignment assignment) {
-        // Set the id field
         idField.setText(String.valueOf(assignment.id));
-
-        // Set the name field
         nameField.setText(assignment.name);
-
-        // Set the instructions field
         instructionsField.setText(assignment.instructions);
-
-        // Set the answer key field
         answerKeyField.setText(assignment.answerKey);
+        // Pastikan tombol delete diaktifkan saat assignment dipilih
+        deleteButton.setDisable(assignment == null || idField.getText().isEmpty());
     }
 
     @FXML
     void onNewAssignmentClick(ActionEvent event) {
-        // Clear the contents of the id field
         idField.clear();
-
-        // Clear the contents of all text fields
         nameField.clear();
         instructionsField.clear();
         answerKeyField.clear();
+        // Nonaktifkan tombol delete saat tidak ada assignment yang dipilih
+        deleteButton.setDisable(true);
     }
 
     @FXML
     void onSaveClick(ActionEvent event) {
-        // If id is set, update, else insert
         if (idField.getText().isEmpty()) {
-            // Insert new assignment
             try (Connection c = MainDataSource.getConnection()) {
                 PreparedStatement stmt = c.prepareStatement("INSERT INTO assignments (name, instructions, answer_key) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
                 stmt.setString(1, nameField.getText());
                 stmt.setString(2, instructionsField.getText());
                 stmt.setString(3, answerKeyField.getText());
                 stmt.executeUpdate();
-
                 ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
-                    // Get generated id, update idField
                     idField.setText(String.valueOf(rs.getLong(1)));
                 }
             } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Database Error");
-                alert.setContentText(e.toString());
+                showAlert("Error", "Database Error", e.toString());
             }
         } else {
-            // Update existing assignment
             try (Connection c = MainDataSource.getConnection()) {
                 PreparedStatement stmt = c.prepareStatement("UPDATE assignments SET name = ?, instructions = ?, answer_key = ? WHERE id = ?");
                 stmt.setString(1, nameField.getText());
@@ -165,37 +141,81 @@ public class AdminController {
                 stmt.setInt(4, Integer.parseInt(idField.getText()));
                 stmt.executeUpdate();
             } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Database Error");
-                alert.setContentText(e.toString());
+                showAlert("Error", "Database Error", e.toString());
             }
         }
-
-        // Refresh the assignment list
         refreshAssignmentList();
     }
 
     @FXML
     void onShowGradesClick(ActionEvent event) {
-        // Make sure id is set
         if (idField.getText().isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("No Assignment Selected");
-            alert.setContentText("Please select an assignment to view grades.");
-            alert.showAndWait();
+            showAlert("Error", "No Assignment Selected", "Please select an assignment to view grades.");
             return;
         }
+        Stage gradeStage = new Stage();
+        gradeStage.setTitle("Grades");
+
+        TableView<Grade> gradeTable = new TableView<>();
+
+        TableColumn<Grade, Long> userIdColumn = new TableColumn<>("User ID");
+        userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userId"));
+
+        TableColumn<Grade, String> usernameColumn = new TableColumn<>("Username");
+        usernameColumn.setCellValueFactory(new PropertyValueFactory<>("username"));
+
+        TableColumn<Grade, Long> assignmentColumn = new TableColumn<>("Assignment ID");
+        assignmentColumn.setCellValueFactory(new PropertyValueFactory<>("assignmentId"));
+
+        TableColumn<Grade, Double> gradeColumn = new TableColumn<>("Grade");
+        gradeColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
+
+        gradeTable.getColumns().addAll(userIdColumn, usernameColumn, assignmentColumn, gradeColumn);
+
+        ObservableList<Grade> gradeList = fetchGradeFromDatabase();
+        gradeTable.setItems(gradeList);
+
+        StackPane root = new StackPane();
+        root.getChildren().add(gradeTable);
+        Scene scene = new Scene(root, 600, 400);
+        gradeStage.setScene(scene);
+        gradeStage.show();
+    }
+
+    private ObservableList<Grade> fetchGradeFromDatabase() {
+        ObservableList<Grade> gradeList = FXCollections.observableArrayList();
+        try (Connection c = MainDataSource.getConnection()) {
+            String query = "SELECT g.user_id, u.username, g.assignment_id, g.grade " +
+                    "FROM grades g " +
+                    "JOIN users u ON g.user_id = u.id " +
+                    "WHERE g.assignment_id = ?";
+            PreparedStatement stmt = c.prepareStatement(query);
+            stmt.setLong(1, Long.parseLong(idField.getText()));
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Grade grade = new Grade();
+                grade.setUserId(rs.getLong("user_id"));
+                grade.setAssignmentId(rs.getLong("assignment_id"));
+                grade.setScore(rs.getDouble("grade"));
+                grade.setUsername(rs.getString("username")); // Set username
+                gradeList.add(grade);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Database Error", "Failed to load grades", "Could not retrieve grades from the database.");
+        }
+        return gradeList;
     }
 
     @FXML
     void onTestButtonClick(ActionEvent event) {
-        // Display a window containing the results of the query.
+        // Display a window containing the results of the answer key query.
 
         // Create a new window/stage
         Stage stage = new Stage();
-        stage.setTitle("Query Results");
+        stage.setTitle("Answer Key Results");
 
         // Display in a table view.
         TableView<ArrayList<String>> tableView = new TableView<>();
@@ -250,7 +270,7 @@ public class AdminController {
                 Alert infoAlert = new Alert(Alert.AlertType.INFORMATION);
                 infoAlert.setTitle("Query Results");
                 infoAlert.setHeaderText(null);
-                infoAlert.setContentText("The query executed successfully but returned no data.");
+                infoAlert.setContentText("The answer key query executed successfully but returned no data.");
                 infoAlert.showAndWait();
                 return; // Exit the method, don't show the empty table window
             }
@@ -272,7 +292,7 @@ public class AdminController {
             e.printStackTrace(); // Print stack trace to console/log for debugging
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setTitle("Database Error");
-            errorAlert.setHeaderText("Failed to execute query or retrieve results.");
+            errorAlert.setHeaderText("Failed to execute the answer key query or retrieve results.");
             errorAlert.setContentText("SQL Error: " + e.getMessage());
             errorAlert.showAndWait();
         } catch (Exception e) {
@@ -286,5 +306,59 @@ public class AdminController {
         }
     } // End of onTestButtonClick method
 
+    @FXML
+    void onDeleteClick(ActionEvent event) {
+        // Metode ini sudah ada dan terhubung ke tombol delete di bagian atas.
+        // Kita akan memindahkan logika penghapusan ke metode onDeleteAssignmentClick.
+        onDeleteAssignmentClick(event);
+    }
 
+    @FXML
+    void onDeleteAssignmentClick(ActionEvent event) {
+        // Pastikan ada tugas yang dipilih
+        if (idField.getText().isEmpty()) {
+            showAlert("Error", "No Assignment Selected", "Please select an assignment to delete.");
+            return;
+        }
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Confirmation");
+        confirmation.setHeaderText("Delete Assignment");
+        confirmation.setContentText("Are you sure you want to delete the assignment: " + nameField.getText() + "?");
+
+        confirmation.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                try (Connection c = MainDataSource.getConnection()) {
+                    // Hapus nilai terkait terlebih dahulu (opsional, tergantung kebutuhan)
+                    PreparedStatement deleteGradesStmt = c.prepareStatement("DELETE FROM grades WHERE assignment_id = ?");
+                    deleteGradesStmt.setInt(1, Integer.parseInt(idField.getText()));
+                    deleteGradesStmt.executeUpdate();
+
+                    // Hapus tugas
+                    PreparedStatement deleteAssignmentStmt = c.prepareStatement("DELETE FROM assignments WHERE id = ?");
+                    deleteAssignmentStmt.setInt(1, Integer.parseInt(idField.getText()));
+                    int rowsAffected = deleteAssignmentStmt.executeUpdate();
+
+                    if (rowsAffected > 0) {
+                        showAlert("Success", "Assignment Deleted", "Successfully deleted the assignment: " + nameField.getText());
+                        refreshAssignmentList();
+                        onNewAssignmentClick(new ActionEvent()); // Kosongkan form
+                    } else {
+                        showAlert("Error", "Delete Failed", "Failed to delete the assignment.");
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    showAlert("Database Error", "Delete Failed", "Could not delete the assignment from the database.");
+                }
+            }
+        });
+    }
+
+    private void showAlert(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }

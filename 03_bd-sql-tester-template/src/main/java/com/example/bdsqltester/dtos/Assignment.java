@@ -8,6 +8,7 @@ public class Assignment {
     public String name;
     public String instructions;
     public String answerKey;
+    public Grade grade;
 
     public Assignment(long id, String name, String instructions, String answerKey) {
         this.id = id;
@@ -23,8 +24,51 @@ public class Assignment {
         this.answerKey = rs.getString("answer_key");
     }
 
+    public Assignment(long id, String name, int gradeValue) {
+    }
+
     @Override
     public String toString() {
         return name;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
+    public String getAnswerKey() {
+        return answerKey;
+    }
+
+    public void setAnswerKey(String answerKey) {
+        this.answerKey = answerKey;
+    }
+
+    public Grade getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Grade grade) {
+        this.grade = grade;
     }
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:controller="com.example.bdsqltester.scenes.User.UserController.AverageViewController"
+      alignment="CENTER"
+      spacing="20.0"
+      xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1">
+
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    </padding>
+
+    <Label style="-fx-font-size: 18.0; -fx-font-weight: bold;" text="Finished Assignments"/>
+
+    <TableView fx:id="assignmentTable" prefHeight="300.0">
+        <columns>
+            <TableColumn prefWidth="200.0" text="Assignment Name">
+                <cellValueFactory>
+                    <PropertyValueFactory property="assignmentName"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn prefWidth="100.0" text="Score">
+                <cellValueFactory>
+                    <PropertyValueFactory property="score"/>
+                </cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+
+    <HBox alignment="CENTER_RIGHT" spacing="10.0">
+        <Label style="-fx-font-weight: bold;" text="Average Score:"/>
+        <Label fx:id="averageScoreLabel" style="-fx-font-weight: bold; -fx-text-fill: #2a52be;"/>
+    </HBox>
+
+    <Button fx:id="refreshButton" defaultButton="true" text="Refresh Data"/>
+
+</VBox>
